@@ -39,7 +39,7 @@ public class EstudianteService {
             return false;
         }else if(estudiante.getSegundoApellido().equals("")) {
             return false;
-        }else if(estudiante.getFechaNacimiento() != null) {
+        }else if(estudiante.getFechaNacimiento() == null) {
             return false;
         }else if(!(estudiante.getTipoColegioProcedencia().equals("municipal") || estudiante.getTipoColegioProcedencia().equals("privado") || estudiante.getTipoColegioProcedencia().equals("subvencionado"))) {
             return false;

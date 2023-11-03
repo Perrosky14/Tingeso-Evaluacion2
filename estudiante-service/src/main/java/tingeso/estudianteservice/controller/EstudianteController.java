@@ -7,6 +7,7 @@ import tingeso.estudianteservice.entity.EstudianteEntity;
 import tingeso.estudianteservice.service.EstudianteService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/estudiante")
@@ -23,11 +24,11 @@ public class EstudianteController {
 
     @GetMapping("/{id}")
     public ResponseEntity<EstudianteEntity> obtenerEstudiante(@PathVariable("id") Long id) {
-        EstudianteEntity estudiante = estudianteService.obtenerPorId(id).get();
-        if(estudiante == null) {
-            return ResponseEntity.notFound().build();
+        Optional<EstudianteEntity> estudiante = estudianteService.obtenerPorId(id);
+        if(estudiante.isPresent()) {
+            return ResponseEntity.ok(estudiante.get());
         }
-        return ResponseEntity.ok(estudiante);
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping()
@@ -40,11 +41,14 @@ public class EstudianteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<EstudianteEntity> cambiarEstudiante(@PathVariable Long id, @RequestBody EstudianteEntity estudiante) {
-        if(estudianteService.validateEstudiante(estudiante)) {
-            estudiante.setId(id);
-            return ResponseEntity.ok(estudianteService.guardarEstudiante(estudiante));
+        if(estudianteService.obtenerPorId(id).isPresent()) {
+            if(estudianteService.validateEstudiante(estudiante)) {
+                estudiante.setId(id);
+                return ResponseEntity.ok(estudianteService.guardarEstudiante(estudiante));
+            }
+            return ResponseEntity.unprocessableEntity().build();
         }
-        return ResponseEntity.unprocessableEntity().build();
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
