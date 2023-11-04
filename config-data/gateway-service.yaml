@@ -30,3 +30,7 @@ spring:
           uri: lb://estudiante-service
           predicates:
             - Path=/estudiante/**
+        - id: arancel-service
+          uri: lb://arancel-service
+          predicates:
+            - Path=/arancel/**
