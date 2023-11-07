@@ -3,8 +3,10 @@ package tingeso.arancelservice.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import tingeso.arancelservice.entity.ArancelEntity;
 import tingeso.arancelservice.model.EstudianteEntity;
@@ -27,16 +29,7 @@ public class ArancelService {
         return (ArrayList<ArancelEntity>) arancelRepository.findAll();
     }
 
-    public ArancelEntity guardarArancel(Long idEstudiante) {
-        ArancelEntity arancel = new ArancelEntity();
-        arancel.setMonto(1500000);
-        arancel.setDescuentos(0);
-        arancel.setContado(true);
-        arancel.setPagado(false);
-        arancel.setCantCuotas(0);
-        arancel.setFechaPago(null);
-        arancel.setInicializacion(true);
-        arancel.setIdEstudiante(idEstudiante);
+    public ArancelEntity guardarArancel(ArancelEntity arancel) {
         return arancelRepository.save(arancel);
     }
 
@@ -44,7 +37,7 @@ public class ArancelService {
         return arancelRepository.findById(id);
     }
 
-    public ArancelEntity obtenerPorEstudianteAsociado(Long idEstudiante) {
+    public Optional<ArancelEntity> obtenerPorEstudianteAsociado(Long idEstudiante) {
         return arancelRepository.buscarPorEstudianteAsociado(idEstudiante);
     }
 
@@ -60,7 +53,9 @@ public class ArancelService {
         }else if(arancel.getCantCuotas() < 0) {
             return false;
         }else if(arancel.getFechaPago() == null) {
-            return false;
+            if(arancel.getPagado()) {
+                return false;
+            }
         }else if(arancel.getInicializacion() == null) {
             return false;
         }else if(arancel.getIdEstudiante() < 0) {
@@ -119,13 +114,22 @@ public class ArancelService {
     }
 
     public EstudianteEntity findByIdEstudiante(Long idEstudiante) {
-        ResponseEntity<EstudianteEntity> response = restTemplate.exchange(
-                "http://localhost:8080/estudiante/" + idEstudiante,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<EstudianteEntity>() {}
-        );
-        return response.getBody();
+        try {
+            ResponseEntity<EstudianteEntity> response = restTemplate.exchange(
+                    "http://localhost:8080/estudiante/" + idEstudiante,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<EstudianteEntity>() {}
+            );
+
+            if(response.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return null;
+            }
+
+            return response.getBody();
+        }catch(HttpClientErrorException.NotFound ex) {
+            return null;
+        }
     }
 
     public Boolean eliminarArancel(Long id) {

@@ -1,8 +1,15 @@
 package tingeso.estudianteservice.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import tingeso.estudianteservice.entity.EstudianteEntity;
+import tingeso.estudianteservice.model.ArancelEntity;
 import tingeso.estudianteservice.repository.EstudianteRepository;
 
 import java.time.LocalDate;
@@ -15,6 +22,9 @@ public class EstudianteService {
 
     @Autowired
     EstudianteRepository estudianteRepository;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     public List<EstudianteEntity> obtenerEstudiantes() {
         return (List<EstudianteEntity>) estudianteRepository.findAll();
@@ -51,7 +61,63 @@ public class EstudianteService {
         return true;
     }
 
-    public boolean eliminarEstudiante(Long id) {
+    public ArancelEntity buscarArancel(Long idEstudiante) {
+        try {
+            ResponseEntity<ArancelEntity> response = restTemplate.exchange(
+                    "http://localhost:8080/arancel/estudiante/" + idEstudiante,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<ArancelEntity>() {}
+            );
+
+            if(response.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return null;
+            }
+
+            return response.getBody();
+        }catch(HttpClientErrorException.NotFound ex) {
+            return null;
+        }
+    }
+
+    public Boolean createArancel(Long idEstudiante) {
+        ArancelEntity arancel = new ArancelEntity();
+        arancel.setMonto(1500000);
+        arancel.setDescuentos(0);
+        arancel.setContado(true);
+        arancel.setPagado(false);
+        arancel.setCantCuotas(0);
+        arancel.setFechaPago(null);
+        arancel.setInicializacion(true);
+        arancel.setIdEstudiante(idEstudiante);
+        try {
+            ResponseEntity<ArancelEntity> response = restTemplate.postForEntity(
+                    "http://localhost:8080/arancel",
+                    arancel,
+                    ArancelEntity.class
+            );
+
+            if(response.getStatusCode() == HttpStatus.NOT_FOUND || response.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
+                return false;
+            }
+            return true;
+        }catch(HttpClientErrorException.NotFound ex) {
+            return false;
+        }
+    }
+
+    public Boolean eliminarArancel(Long id) {
+        String url = "http://localhost:8080/arancel/" + id;
+        try {
+            restTemplate.delete(url);
+            return true;
+        } catch (HttpClientErrorException ex) {
+            return false;
+        }
+    }
+
+
+    public Boolean eliminarEstudiante(Long id) {
         try {
             estudianteRepository.deleteById(id);
             return true;

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tingeso.estudianteservice.entity.EstudianteEntity;
+import tingeso.estudianteservice.model.ArancelEntity;
 import tingeso.estudianteservice.service.EstudianteService;
 
 import java.util.List;
@@ -34,7 +35,11 @@ public class EstudianteController {
     @PostMapping()
     public ResponseEntity<EstudianteEntity> guardarEstudiante(@RequestBody EstudianteEntity estudiante) {
         if (estudianteService.validateEstudiante(estudiante)) {
-            return ResponseEntity.ok(estudianteService.guardarEstudiante(estudiante));
+            EstudianteEntity estudianteRespuesta = estudianteService.guardarEstudiante(estudiante);
+            if(estudianteService.createArancel(estudianteRespuesta.getId())) {
+                return ResponseEntity.ok(estudianteRespuesta);
+            }
+            return ResponseEntity.unprocessableEntity().build();
         }
         return ResponseEntity.unprocessableEntity().build();
     }
@@ -53,10 +58,14 @@ public class EstudianteController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<EstudianteEntity> eliminarEstudiante(@PathVariable Long id) {
-        if(estudianteService.eliminarEstudiante(id)) {
-            return ResponseEntity.ok().build();
+        ArancelEntity arancel = estudianteService.buscarArancel(id);
+        if(arancel != null) {
+            if(estudianteService.eliminarArancel(arancel.getId()) && estudianteService.eliminarEstudiante(id)) {
+                return ResponseEntity.ok().build();
+            }
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.unprocessableEntity().build();
     }
 
 }
