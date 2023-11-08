@@ -10,6 +10,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import tingeso.estudianteservice.entity.EstudianteEntity;
 import tingeso.estudianteservice.model.ArancelEntity;
+import tingeso.estudianteservice.model.MatriculaEntity;
 import tingeso.estudianteservice.repository.EstudianteRepository;
 
 import java.time.LocalDate;
@@ -80,6 +81,25 @@ public class EstudianteService {
         }
     }
 
+    public MatriculaEntity buscarMatricula(Long idEstudiante) {
+        try {
+            ResponseEntity<MatriculaEntity> response = restTemplate.exchange(
+                    "http://localhost:8080/matricula/estudiante/" + idEstudiante,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<MatriculaEntity>() {}
+            );
+
+            if(response.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return null;
+            }
+
+            return response.getBody();
+        }catch(HttpClientErrorException.NotFound ex) {
+            return null;
+        }
+    }
+
     public Boolean createArancel(Long idEstudiante) {
         ArancelEntity arancel = new ArancelEntity();
         arancel.setMonto(1500000);
@@ -106,6 +126,28 @@ public class EstudianteService {
         }
     }
 
+    public Boolean createMatricula(Long idEstudiante) {
+        MatriculaEntity matricula = new MatriculaEntity();
+        matricula.setMonto(70000);
+        matricula.setPagado(false);
+        matricula.setFechaPagado(null);
+        matricula.setIdEstudiante(idEstudiante);
+        try {
+            ResponseEntity<MatriculaEntity> response = restTemplate.postForEntity(
+                    "http://localhost:8080/matricula",
+                    matricula,
+                    MatriculaEntity.class
+            );
+
+            if(response.getStatusCode() == HttpStatus.NOT_FOUND || response.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
+                return false;
+            }
+            return true;
+        }catch(HttpClientErrorException.NotFound ex) {
+            return false;
+        }
+    }
+
     public Boolean eliminarArancel(Long id) {
         String url = "http://localhost:8080/arancel/" + id;
         try {
@@ -116,6 +158,15 @@ public class EstudianteService {
         }
     }
 
+    public Boolean eliminarMatricula(Long id) {
+        String url = "http://localhost:8080/matricula/" + id;
+        try {
+            restTemplate.delete(url);
+            return true;
+        } catch (HttpClientErrorException ex) {
+            return false;
+        }
+    }
 
     public Boolean eliminarEstudiante(Long id) {
         try {
