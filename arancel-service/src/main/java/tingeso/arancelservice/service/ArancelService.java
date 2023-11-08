@@ -42,7 +42,7 @@ public class ArancelService {
     }
 
     public Boolean validateArancel(ArancelEntity arancel) {
-        if(arancel.getMonto() < 0) {
+        if(arancel.getMonto() <= 0) {
             return false;
         }else if(arancel.getDescuentos() < 0) {
             return false;
