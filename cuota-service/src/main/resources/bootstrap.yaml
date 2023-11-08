@@ -1,0 +1,22 @@
+spring:
+  devtools:
+    restart:
+      aditional-paths: src/main/java
+  application:
+    name: cuota-service
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    plataform: postgres
+    driver-class-name: org.postgresql.Driver
+    dbname: TingesoCuota
+    url: jdbc:postgresql://localhost:5432/TingesoCuota
+    username: postgres
+    password: Paralele34
+  cloud:
+    config:
+      enabled: true
+      uri: http://localhost:8081
