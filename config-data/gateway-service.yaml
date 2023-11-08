@@ -38,3 +38,7 @@ spring:
           uri: lb://matricula-service
           predicates:
             - Path=/matricula/**
+        - id: cuota-service
+          uri: lb://cuota-service
+          predicates:
+            - Path=/cuota/**
