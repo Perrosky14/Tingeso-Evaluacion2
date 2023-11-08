@@ -34,3 +34,4 @@ spring:
           uri: lb://arancel-service
           predicates:
             - Path=/arancel/**
+            - Path=/matricula/**
