@@ -6,8 +6,12 @@ const EstudiantesComponent = () => {
   const [estudiantes, setEstudiantes] = useState([]);
   const navigate = useNavigate();
 
+  const volverPaginaPrincipal = () => {
+    navigate("/")
+  }
+
   const agregarEstudiante = () => {
-    navigate('/agregar-estudiante');
+    navigate("/agregar-estudiante");
   };
 
   const verEstudiante = (idEstudiante) => {
@@ -25,7 +29,8 @@ const EstudiantesComponent = () => {
       <h2 className="text-center">Lista de Estudiantes</h2>
       <br></br>
       <div className="row">
-        <button className="btn btn-primary" style={{ width: '161px' }} onClick={agregarEstudiante}>Agregar Estudiante</button>
+        <button className='btn btn-primary' style={{ width: '186px' }} onClick={volverPaginaPrincipal}>Volver Pagina Principal</button>
+        <button className="btn btn-primary" style={{ marginLeft: "10px", width: '161px' }} onClick={agregarEstudiante}>Agregar Estudiante</button>
       </div>
       <br></br>
       <div className="row">

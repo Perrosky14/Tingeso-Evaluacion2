@@ -8,7 +8,7 @@ const VerEstudianteComponent = () => {
     const { id } = useParams();
 
     const editarEstudiante = () => {
-        navigate('/editar-estudiante/' + id);
+        navigate("/editar-estudiante/" + id);
     };
 
     const eliminarEstudiante = () => {
@@ -22,15 +22,15 @@ const VerEstudianteComponent = () => {
     };
 
     const volverListaEstudiantes = () => {
-        navigate("/estudiantes")
+        navigate("/estudiantes");
     }
 
     const verMatricula = () => {
-        navigate('/ver-matricula/' + id)
+        navigate("/ver-matricula/" + id);
     }
 
     const verArancel = () => {
-        navigate('/ver-arancel/' + id)
+        navigate("/ver-arancel/" + id);
     }
 
     useEffect(() => {
@@ -102,7 +102,7 @@ const VerEstudianteComponent = () => {
                         <button style={{ marginLeft: "10px" }} onClick={() => eliminarEstudiante()} className="btn btn-danger">Eliminar</button>
                         <br></br>
                         <br></br>
-                        <button onClick={() => verMatricula()} className="btn btn-info">Ver Maticula</button>
+                        <button onClick={() => verMatricula()} className="btn btn-info">Ver Matricula</button>
                         <button style={{ marginLeft: "10px" }} onClick={() => verArancel()} className="btn btn-info">Ver Arancel</button>
                     </div>
                 </div>

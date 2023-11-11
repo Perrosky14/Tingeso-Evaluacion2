@@ -9,19 +9,19 @@ class EstudianteService {
     }
 
     obtenerEstudiante(idEstudiante) {
-        return axios.get(ESTUDIANTE_API_URL + '/' + idEstudiante);
+        return axios.get(ESTUDIANTE_API_URL + "/" + idEstudiante);
     }
 
     guardarEstudiante(estudiante) {
-        return axios.post(ESTUDIANTE_API_URL, estudiante)
+        return axios.post(ESTUDIANTE_API_URL, estudiante);
     }
 
     editarEstudiante(idEstudiante, estudiante) {
-        return axios.put(ESTUDIANTE_API_URL + '/' + idEstudiante, estudiante)
+        return axios.put(ESTUDIANTE_API_URL + "/" + idEstudiante, estudiante);
     }
 
     eliminarEstudiante(idEstudiante) {
-        return axios.delete(ESTUDIANTE_API_URL + '/' + idEstudiante)
+        return axios.delete(ESTUDIANTE_API_URL + "/" + idEstudiante);
     }
 
 }
