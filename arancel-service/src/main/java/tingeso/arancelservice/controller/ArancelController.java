@@ -7,6 +7,7 @@ import tingeso.arancelservice.entity.ArancelEntity;
 import tingeso.arancelservice.model.EstudianteEntity;
 import tingeso.arancelservice.service.ArancelService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -27,6 +28,18 @@ public class ArancelController {
     public ResponseEntity<ArancelEntity> obtenerArancelPorId(@PathVariable Long id) {
         Optional<ArancelEntity> arancel = arancelService.obtenerPorId(id);
         if(arancel.isPresent()) {
+            if(!arancel.get().getInicializacion()) {
+                if(arancel.get().getContado()) {
+                    arancel.get().setDescuentos(arancel.get().getMonto()-arancelService.descuentoPorPagoAlContado(arancel.get()));
+                }else {
+                    EstudianteEntity estudiante = arancelService.findByIdEstudiante(arancel.get().getIdEstudiante());
+                    Integer descuentoPorColegio = arancelService.descuentoPorTipoDeColegioProcedencia(arancel.get(), estudiante.getTipoColegioProcedencia());
+                    Integer descuentoPorEgreso = arancelService.descuentoPorAniosDesdeEgreso(arancel.get(), estudiante.getAnioEgreso(), LocalDate.now());
+                    Integer descuento = arancel.get().getMonto() - (descuentoPorColegio + descuentoPorEgreso);
+                    arancel.get().setDescuentos(descuento);
+                    arancel.get().setCantCuotas(arancelService.maxCuotasParaArancel(estudiante.getTipoColegioProcedencia()));
+                }
+            }
             return ResponseEntity.ok(arancel.get());
         }
         return ResponseEntity.notFound().build();
@@ -36,6 +49,18 @@ public class ArancelController {
     public ResponseEntity<ArancelEntity> obtenerArancelPorEstudiante(@PathVariable Long id) {
         Optional<ArancelEntity> arancel = arancelService.obtenerPorEstudianteAsociado(id);
         if (arancel.isPresent()) {
+            if(!arancel.get().getInicializacion()) {
+                if(arancel.get().getContado()) {
+                    arancel.get().setDescuentos(arancel.get().getMonto()-arancelService.descuentoPorPagoAlContado(arancel.get()));
+                }else {
+                    EstudianteEntity estudiante = arancelService.findByIdEstudiante(arancel.get().getIdEstudiante());
+                    Integer descuentoPorColegio = arancelService.descuentoPorTipoDeColegioProcedencia(arancel.get(), estudiante.getTipoColegioProcedencia());
+                    Integer descuentoPorEgreso = arancelService.descuentoPorAniosDesdeEgreso(arancel.get(), estudiante.getAnioEgreso(), LocalDate.now());
+                    Integer descuento = arancel.get().getMonto() - (descuentoPorColegio + descuentoPorEgreso);
+                    arancel.get().setDescuentos(descuento);
+                    arancel.get().setCantCuotas(arancelService.maxCuotasParaArancel(estudiante.getTipoColegioProcedencia()));
+                }
+            }
             return ResponseEntity.ok(arancel.get());
         }
         return ResponseEntity.notFound().build();
@@ -63,6 +88,22 @@ public class ArancelController {
                     return ResponseEntity.ok(arancelService.guardarArancel(arancel));
                 }
                 return ResponseEntity.unprocessableEntity().build();
+            }
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/cantidad-cuotas/{id}")
+    public ResponseEntity<ArancelEntity> cantidadCuotas(@PathVariable Long id, @RequestBody ArancelEntity arancel) {
+        if(arancelService.obtenerPorId(id).isPresent()) {
+            EstudianteEntity estudiante = arancelService.findByIdEstudiante(arancel.getIdEstudiante());
+            if(estudiante != null) {
+                Integer diferencia = arancel.getMonto() - arancel.getDescuentos();
+                if(arancelService.validateArancel(arancel) && arancelService.createCuotas(id, arancel.getCantCuotas(), diferencia)) {
+                    arancel.setId(id);
+                    return ResponseEntity.ok(arancelService.guardarArancel(arancel));
+                }
             }
             return ResponseEntity.notFound().build();
         }

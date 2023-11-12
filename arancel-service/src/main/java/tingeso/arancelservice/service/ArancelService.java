@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import tingeso.arancelservice.entity.ArancelEntity;
+import tingeso.arancelservice.model.CuotaEntity;
 import tingeso.arancelservice.model.EstudianteEntity;
 import tingeso.arancelservice.repository.ArancelRepository;
 
@@ -111,6 +112,41 @@ public class ArancelService {
         }
 
         return maxCuotas;
+    }
+
+    public Boolean createCuotas(Long idArancel, Integer cantCuotas, Integer montoFinal) {
+        Integer montoCuota = montoFinal/cantCuotas;
+        LocalDate fechaParaCuotas = LocalDate.now();
+        for(Integer i = 0; i < cantCuotas; ++i) {
+            CuotaEntity cuota = new CuotaEntity();
+            cuota.setNumeroCuota(i+1);
+            cuota.setMonto(montoCuota);
+            if(fechaParaCuotas.getMonthValue() == 12) {
+                fechaParaCuotas = fechaParaCuotas.withMonth(1);
+                fechaParaCuotas = fechaParaCuotas.withYear(fechaParaCuotas.getYear()+1);
+            }else {
+                fechaParaCuotas = fechaParaCuotas.withMonth(fechaParaCuotas.getMonthValue()+1);
+            }
+            cuota.setFechaVencimiento(fechaParaCuotas);
+            cuota.setMesesAtraso(0);
+            cuota.setPagado(false);
+            cuota.setFechaPago(null);
+            cuota.setIdArancel(idArancel);
+            try {
+                ResponseEntity<CuotaEntity> response = restTemplate.postForEntity(
+                        "http://localhost:8080/cuota",
+                        cuota,
+                        CuotaEntity.class
+                );
+
+                if(response.getStatusCode() == HttpStatus.NOT_FOUND || response.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
+                    return false;
+                }
+            }catch(HttpClientErrorException.NotFound ex) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public EstudianteEntity findByIdEstudiante(Long idEstudiante) {
