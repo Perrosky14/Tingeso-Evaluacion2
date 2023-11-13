@@ -13,6 +13,8 @@ public class CuotaEntity {
     private Long id;
     private Integer numeroCuota;
     private Integer monto;
+    private Integer descuento;
+    private Integer interesPorAtraso;
     private LocalDate fechaVencimiento;
     private Integer mesesAtraso;
     private Boolean pagado;

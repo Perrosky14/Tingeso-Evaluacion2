@@ -149,7 +149,7 @@ const CrearEstudianteComponent = () => {
                     required
                   />
                 </div>
-
+                <br/>
                 <button className="btn btn-success" type="submit">Guardar</button>
                 <button className="btn btn-danger" onClick={cancelar} style={{ marginLeft: "10px" }}>Cancelar</button>
               </form>

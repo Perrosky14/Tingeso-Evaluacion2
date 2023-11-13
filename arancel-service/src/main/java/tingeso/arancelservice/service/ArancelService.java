@@ -114,6 +114,25 @@ public class ArancelService {
         return maxCuotas;
     }
 
+    public ArrayList<CuotaEntity> buscarCuotas(Long idArancel) {
+        try {
+            ResponseEntity<ArrayList<CuotaEntity>> response = restTemplate.exchange(
+                    "http://localhost:8080/cuota/arancel/" + idArancel,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<ArrayList<CuotaEntity>>() {}
+            );
+
+            if(response.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return null;
+            }
+
+            return response.getBody();
+        }catch(HttpClientErrorException.NotFound ex) {
+            return null;
+        }
+    }
+
     public Boolean createCuotas(Long idArancel, Integer cantCuotas, Integer montoFinal) {
         Integer montoCuota = montoFinal/cantCuotas;
         LocalDate fechaParaCuotas = LocalDate.now();
@@ -127,6 +146,8 @@ public class ArancelService {
             }else {
                 fechaParaCuotas = fechaParaCuotas.withMonth(fechaParaCuotas.getMonthValue()+1);
             }
+            cuota.setDescuento(0);
+            cuota.setMesesAtraso(0);
             cuota.setFechaVencimiento(fechaParaCuotas);
             cuota.setMesesAtraso(0);
             cuota.setPagado(false);
@@ -165,6 +186,16 @@ public class ArancelService {
             return response.getBody();
         }catch(HttpClientErrorException.NotFound ex) {
             return null;
+        }
+    }
+
+    public Boolean eliminarCuota(Long id) {
+        String url = "http://localhost:8080/cuota/" + id;
+        try {
+            restTemplate.delete(url);
+            return true;
+        } catch (HttpClientErrorException ex) {
+            return false;
         }
     }
 

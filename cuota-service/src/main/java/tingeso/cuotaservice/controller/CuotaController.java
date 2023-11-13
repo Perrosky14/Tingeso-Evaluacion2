@@ -7,6 +7,7 @@ import tingeso.cuotaservice.entity.CuotaEntity;
 import tingeso.cuotaservice.model.ArancelEntity;
 import tingeso.cuotaservice.service.CuotaService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -27,6 +28,13 @@ public class CuotaController {
     public ResponseEntity<CuotaEntity> obtenerCuotaPorId(@PathVariable("id") Long id) {
         Optional<CuotaEntity> cuota = cuotaService.obtenerPorId(id);
         if(cuota.isPresent()) {
+            if(!cuota.get().getPagado()) {
+                CuotaEntity cuotaAux = cuota.get();
+                Integer mesesAtraso = cuotaService.calcularMesesAtraso(cuotaAux, LocalDate.now());
+                cuotaAux.setMesesAtraso(mesesAtraso);
+                cuotaAux.setInteresPorAtraso(cuotaService.calcularTasaInteresMesesAtraso(cuotaAux, mesesAtraso));
+                cuotaService.guardarCuota(cuotaAux);
+            }
             return ResponseEntity.ok(cuota.get());
         }
         return ResponseEntity.notFound().build();

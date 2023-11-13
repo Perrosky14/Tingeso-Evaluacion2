@@ -8,6 +8,9 @@ import CrearEstudianteComponent from './components/CrearEstudianteComponent';
 import VerEstudianteComponent from './components/VerEstudianteComponent';
 import EditarEstudianteComponent from './components/EditarEstudianteComponent';
 import VerMatriculaComponent from './components/VerMatriculaComponent';
+import VerArancelComponent from './components/VerArancelComponent';
+import CuotasComponent from './components/CuotasComponent';
+import VerCuotaComponent from './components/VerCuotaComponent';
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
             <Route path="/ver-estudiante/:id" element={<VerEstudianteComponent/>}/>
             <Route path="/editar-estudiante/:id" element={<EditarEstudianteComponent/>}/>
             <Route path="ver-matricula/:id" element={<VerMatriculaComponent/>}/>
+            <Route path="/ver-arancel/:id" element={<VerArancelComponent/>}/>
+            <Route path="/ver-cuotas/:id" element={<CuotasComponent/>}/>
+            <Route path="/ver-cuota/:id" element={<VerCuotaComponent/>}/>
           </Routes>
         </div>
       </Router>
