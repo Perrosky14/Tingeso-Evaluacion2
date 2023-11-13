@@ -12,8 +12,8 @@ spring:
   datasource:
     plataform: postgres
     driver-class-name: org.postgresql.Driver
-    dbname: TingesoCuota
-    url: jdbc:postgresql://localhost:5432/TingesoCuota
+    dbname: tingesocuota
+    url: jdbc:postgresql://localhost:5432/tingesocuota
     username: postgres
     password: Paralele34
   cloud:

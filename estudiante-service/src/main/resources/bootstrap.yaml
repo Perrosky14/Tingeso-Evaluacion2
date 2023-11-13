@@ -12,8 +12,8 @@ spring:
   datasource:
     plataform: postgres
     driver-class-name: org.postgresql.Driver
-    dbname: TingesoEstudiante
-    url: jdbc:postgresql://localhost:5432/TingesoEstudiante
+    dbname: tingesoestudiante
+    url: jdbc:postgresql://localhost:5432/tingesoestudiante
     username: postgres
     password: Paralele34
   cloud:
