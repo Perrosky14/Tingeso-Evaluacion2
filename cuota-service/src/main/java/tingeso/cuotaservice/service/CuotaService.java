@@ -98,7 +98,7 @@ public class CuotaService {
     public ArancelEntity findByIdArancel(Long idArancel) {
         try {
             ResponseEntity<ArancelEntity> response = restTemplate.exchange(
-                    "http://localhost:8080/arancel/" + idArancel,
+                    "http://gateway-service:8080/arancel/" + idArancel,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<ArancelEntity>() {}

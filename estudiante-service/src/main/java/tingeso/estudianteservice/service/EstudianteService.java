@@ -65,7 +65,7 @@ public class EstudianteService {
     public ArancelEntity buscarArancel(Long idEstudiante) {
         try {
             ResponseEntity<ArancelEntity> response = restTemplate.exchange(
-                    "http://localhost:8080/arancel/estudiante/" + idEstudiante,
+                    "http://gateway-service:8080/arancel/estudiante/" + idEstudiante,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<ArancelEntity>() {}
@@ -84,7 +84,7 @@ public class EstudianteService {
     public MatriculaEntity buscarMatricula(Long idEstudiante) {
         try {
             ResponseEntity<MatriculaEntity> response = restTemplate.exchange(
-                    "http://localhost:8080/matricula/estudiante/" + idEstudiante,
+                    "http://gateway-service:8080/matricula/estudiante/" + idEstudiante,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<MatriculaEntity>() {}
@@ -112,7 +112,7 @@ public class EstudianteService {
         arancel.setIdEstudiante(idEstudiante);
         try {
             ResponseEntity<ArancelEntity> response = restTemplate.postForEntity(
-                    "http://localhost:8080/arancel",
+                    "http://gateway-service:8080/arancel",
                     arancel,
                     ArancelEntity.class
             );
@@ -134,7 +134,7 @@ public class EstudianteService {
         matricula.setIdEstudiante(idEstudiante);
         try {
             ResponseEntity<MatriculaEntity> response = restTemplate.postForEntity(
-                    "http://localhost:8080/matricula",
+                    "http://gateway-service:8080/matricula",
                     matricula,
                     MatriculaEntity.class
             );
@@ -149,7 +149,7 @@ public class EstudianteService {
     }
 
     public Boolean eliminarArancel(Long id) {
-        String url = "http://localhost:8080/arancel/" + id;
+        String url = "http://gateway-service:8080/arancel/" + id;
         try {
             restTemplate.delete(url);
             return true;
@@ -159,7 +159,7 @@ public class EstudianteService {
     }
 
     public Boolean eliminarMatricula(Long id) {
-        String url = "http://localhost:8080/matricula/" + id;
+        String url = "http://gateway-service:8080/matricula/" + id;
         try {
             restTemplate.delete(url);
             return true;

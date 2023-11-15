@@ -56,7 +56,7 @@ public class MatriculaService {
     public EstudianteEntity findByIdEstudiante(Long idEstudiante) {
         try {
             ResponseEntity<EstudianteEntity> response = restTemplate.exchange(
-                    "http://localhost:8080/estudiante/" + idEstudiante,
+                    "http://gateway-service:8080/estudiante/" + idEstudiante,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<EstudianteEntity>() {}

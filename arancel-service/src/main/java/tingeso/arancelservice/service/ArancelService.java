@@ -117,7 +117,7 @@ public class ArancelService {
     public ArrayList<CuotaEntity> buscarCuotas(Long idArancel) {
         try {
             ResponseEntity<ArrayList<CuotaEntity>> response = restTemplate.exchange(
-                    "http://localhost:8080/cuota/arancel/" + idArancel,
+                    "http://gateway-service:8080/cuota/arancel/" + idArancel,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<ArrayList<CuotaEntity>>() {}
@@ -155,7 +155,7 @@ public class ArancelService {
             cuota.setIdArancel(idArancel);
             try {
                 ResponseEntity<CuotaEntity> response = restTemplate.postForEntity(
-                        "http://localhost:8080/cuota",
+                        "http://gateway-service:8080/cuota",
                         cuota,
                         CuotaEntity.class
                 );
@@ -173,7 +173,7 @@ public class ArancelService {
     public EstudianteEntity findByIdEstudiante(Long idEstudiante) {
         try {
             ResponseEntity<EstudianteEntity> response = restTemplate.exchange(
-                    "http://localhost:8080/estudiante/" + idEstudiante,
+                    "http://gateway-service:8080/estudiante/" + idEstudiante,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<EstudianteEntity>() {}
@@ -190,7 +190,7 @@ public class ArancelService {
     }
 
     public Boolean eliminarCuota(Long id) {
-        String url = "http://localhost:8080/cuota/" + id;
+        String url = "http://gateway-service:8080/cuota/" + id;
         try {
             restTemplate.delete(url);
             return true;
